@@ -1,33 +1,30 @@
-#define TRIGGER_PIN 5 // Pin for the ultrasonic sensor trigger
-#define ECHO_PIN 4   // Pin for the ultrasonic sensor echo
+#define TRIG_PIN 14  // GPIO14 (D5)
+#define ECHO_PIN 12  // GPIO12 (D6)
+#define SOUND_SPEED 0.0343  // Speed of sound in cm/µs
 
 void setup() {
-  Serial.begin(9600); // Start serial communication
-  pinMode(TRIGGER_PIN, INPUT);
-  pinMode(ECHO_PIN, OUTPUT);
-  
+  Serial.begin(115200);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
 }
 
 void loop() {
-  // Send a pulse to the ultrasonic sensor to start a measurement
-  digitalWrite(TRIGGER_PIN, LOW);
+  // Trigger the ultrasonic pulse
+  digitalWrite(TRIG_PIN, LOW);
   delayMicroseconds(2);
-  digitalWrite(TRIGGER_PIN, HIGH);
+  digitalWrite(TRIG_PIN, HIGH);
   delayMicroseconds(10);
-  digitalWrite(TRIGGER_PIN, LOW);
+  digitalWrite(TRIG_PIN, LOW);
 
-  // Measure the duration of the pulse from the ultrasonic sensor
+  // Measure the time for echo
   long duration = pulseIn(ECHO_PIN, HIGH);
+  
+  // Calculate distance (time * speed of sound / 2)
+  float distance = (duration * SOUND_SPEED) / 2;
 
-  // Calculate the distance based on the duration of the pulse
-  float distance = duration * 0.034 / 2;
-
-  // Print the distance to the serial monitor
   Serial.print("Distance: ");
   Serial.print(distance);
   Serial.println(" cm");
 
-  delay(1000); // Wait for 1 second before taking another measurement
-
-  
+  delay(500);  // Delay before next reading
 }
